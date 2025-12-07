@@ -3,7 +3,7 @@ services:
     name: rice-disease-app
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn run:app
+    startCommand: gunicorn "app:create_app()"
     envVars:
       - key: FLASK_ENV
         value: production
