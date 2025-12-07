@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<section class="content">
+  <div class="container-fluid">
+
+    <div class="jumbotron">
+      <h1 class="display-4" 
+          style="font-family: 'Times New Roman'; font-weight: bold; color: #198754;">
+        {{ t["welcome"] }}
+      </h1>
+     
+      <hr class="my-4">
+      <p style="font-family: 'Times New Roman';">
+        {{ t["with_ai_help"] }}, 
+        <strong>HumAi</strong>
+        {{ t["ai_description"] }}
+      </p>
+    </div>
+
+    {% if role == 'Admin' %}
+    <div class="row">
+      <div class="col-lg-4 col-6">
+        <div class="small-box bg-info">
+          <div class="inner">
+            <h3>{{ stats.users }}</h3>
+            <p>{{ t["total_users"] }}</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-users"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-6">
+        <div class="small-box bg-success">
+          <div class="inner">
+            <h3>{{ stats.diseases }}</h3>
+            <p>{{ t["total_diseases"] }}</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-virus"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-6">
+        <div class="small-box bg-warning">
+          <div class="inner">
+            <h3>{{ stats.detections }}</h3>
+            <p>{{ t["total_detections"] }}</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-microscope"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+
+    <div class="card card-success">
+      <div class="card-header">
+        <h3 class="card-title"><i class="fas fa-virus"></i> {{ t["rice_leaf_details"] }}</h3>
+      </div>
+      <div class="card-body">
+        <div id="diseaseCarousel" class="carousel slide" data-ride="carousel">
+          <div class="carousel-inner">
+
+            {% for disease in diseases %}
+              <div class="carousel-item {% if loop.first %}active{% endif %}">
+                <div class="row justify-content-center">
+
+                  <!-- Disease Image -->
+                  <div class="col-md-5 text-center">
+                    <img src="{{ url_for('static', filename=disease.image_path) }}" 
+                         class="img-fluid rounded shadow" 
+                         alt="{{ disease.name }}"
+                         style="max-height: 250px; object-fit: cover;">
+                  </div>
+
+                  <!-- Disease Details -->
+                  <div class="col-md-6">
+                    <h4 class="mt-3">{{ disease.name }}</h4>
+                    <p><strong>{{ t["description"] }}:</strong> {{ disease.description }}</p>
+
+                    <!-- Centered Navigation Buttons -->
+                    <div class="text-center mt-3">
+                      <a class="btn btn-success mr-2" href="#diseaseCarousel" role="button" data-slide="prev">
+                        <i class="fas fa-arrow-left"></i> {{ t["previous"] }}
+                      </a>
+                      <a class="btn btn-success" href="#diseaseCarousel" role="button" data-slide="next">
+                        {{ t["next"] }} <i class="fas fa-arrow-right"></i>
+                      </a>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              
+            {% else %}
+              <div class="carousel-item active">
+                <div class="alert alert-warning text-center">{{ t["no_diseases_found"] }}.</div>
+              </div>
+            {% endfor %}
+
+          </div>
+        </div>
+      </div>
+    </div>
+  
+{% endblock %}

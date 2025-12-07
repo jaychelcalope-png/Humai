@@ -1,0 +1,48 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# ---- Virtual Environment ----
+venv/
+env/
+.venv/
+
+# ---- Environment / Secrets ----
+instance/
+*.env
+.env.*
+*.pem
+cert.pem
+key.pem
+openssl.cnf
+
+# ---- Flask / Uploads ----
+# Ignore all files in uploads folder
+static/uploads/*
+# Keep .gitkeep to preserve the folder in Git
+!static/uploads/.gitkeep
+
+# ---- Logs ----
+*.log
+
+# ---- OS / Editor ----
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ---- Build / Packaging ----
+*.egg-info/
+dist/
+build/
+
+# ---- Machine Learning Models ----
+*.hdf5
+*.model
+*.pb
+
+# ---- Render / Railway optional ----
+.render/

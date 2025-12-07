@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="content">
+  <div class="container-fluid">
+
+    <div class="card">
+      <div class="card-header"><h3 class="card-title"><strong>{{t[""]}}</strong></h3></div>
+      <div class="card-body">
+        {% if logs %}
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                {% if current_user.role == 'Admin' %}
+                <th>{{t["users"]}}</th>
+                {% endif %}
+                <th>{{t["image"]}}</th>
+                <th>{{t["result"]}}</th>
+                <th>{{t["confidence_level"]}}</th>
+                <th>{{t["date"]}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for log in logs %}
+              <tr>
+                {% if current_user.role == 'Admin' %}
+                <td>{{ log.user.username }}</td>
+                {% endif %}
+                <td><img src="{{ url_for('static', filename=log.image_path.replace('\\', '/').split('static/')[-1]) }}" height="60"></td>
+                <td><span class="badge badge-success">{{ log.result }}</span></td>
+                <td>{{ '%.2f'|format(log.confidence) }}%</td>
+                <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p>No detection logs yet.</p>
+        {% endif %}
+      </div>
+    </div>
+<div class="mt-4 d-flex justify-content-center">
+  <nav>
+    <ul class="pagination">
+      {% if logs.has_prev %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url_for('detect.logs', page=logs.prev_num) }}">Previous</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+      {% endif %}
+
+      {% for p in range(1, logs.pages + 1) %}
+        <li class="page-item {% if p == logs.page %}active{% endif %}">
+          <a class="page-link" href="{{ url_for('detect.logs', page=p) }}">{{ p }}</a>
+        </li>
+      {% endfor %}
+
+      {% if logs.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url_for('detect.logs', page=logs.next_num) }}">Next</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">Next</span></li>
+      {% endif %}
+    </ul>
+  </nav>
+  </div>
+</section>
+{% endblock %}

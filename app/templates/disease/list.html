@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="content">
+  <div class="container-fluid">
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-info">
+          {% for msg in messages %}
+            <p>{{ msg }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="card">
+      <div class="card-header">
+<h3 class="card-title"><strong>{{ t["disease_information"] }}</strong></h3>
+
+        <a href="{{ url_for('disease.create_disease') }}" class="btn btn-primary float-right">{{t["add_new"]}}</a>
+      </div>
+      <div class="card-body">
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>{{t["image"]}}</th>
+              <th>{{t["name"]}}</th>
+              <th>{{t["description"]}}</th>
+              <th style="width: 150px;">{{t["actions"]}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for disease in diseases %}
+            <tr>
+              <td>
+                {% if disease.image_path %}
+                  <img src="{{ url_for('static', filename=disease.image_path) }}"
+                      alt="{{ disease.name }}" width="80" height="80" style="object-fit: cover;"/>
+                {% else %}
+                  No image
+                {% endif %}
+              </td>
+              <td>{{ disease.name }}</td>
+              <td>{{ disease.description }}</td>
+              <td>
+                <a href="{{ url_for('disease.edit_disease', id=disease.id) }}" class="btn btn-warning btn-sm">{{t["edit"]}}</a>
+                <a href="{{ url_for('disease.delete_disease', id=disease.id) }}" class="btn btn-danger btn-sm">{{t["delete"]}}</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}
+

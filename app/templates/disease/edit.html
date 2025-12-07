@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+   <h2 style="font-family: Cambria, serif; font-weight: bold; font-size: 40px;">
+  {{ t["edit"] }}
+</h2>
+
+
+    <form method="POST" enctype="multipart/form-data">
+        <!-- Disease Name -->
+        <div class="mb-3">
+            <label for="name" class="form-label">{{t["disease_name"]}}</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ disease.name }}" required>
+        </div>
+
+        <!-- Disease Description -->
+        <div class="mb-3">
+            <label for="description" class="form-label">{{t["description"]}}</label>
+            <textarea class="form-control" id="description" name="description" rows="4" required>{{ disease.description }}</textarea>
+        </div>
+
+                <!-- Symptoms -->
+        <div class="form-group mt-3">
+            <label for="symptoms">{{t["symptoms"]}}</label>
+            <textarea class="form-control" id="symptoms" name="symptoms" rows="3" placeholder="Enter symptoms">{{ disease.symptoms }}</textarea>
+        </div>
+
+        <!-- Treatment -->
+        <div class="form-group mt-3">
+            <label for="treatment">{{t["treatment"]}}</label>
+            <textarea class="form-control" id="treatment" name="treatment" rows="3" placeholder="Enter treatment methods">{{ disease.treatment }}</textarea>
+        </div>
+
+        <!-- Current Image -->
+        {% if disease.image_path %}
+        <div class="mb-3">
+            <label class="form-label">{{t["current_image"]}}</label>
+            <div>
+                <img src="{{ url_for('static', filename=disease.image_path.split('static/')[-1]) }}"
+                     alt="{{ disease.name }}" class="img-thumbnail" style="max-height: 200px;">
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Upload New Image -->
+        <div class="mb-3">
+            <label for="image" class="form-label">{{t["upload_new_image"]}}</label>
+            <input class="form-control" type="file" id="image" name="image" accept=".png, .jpg, .jpeg, .gif">
+            <!-- <small class="text-muted">{{t["add_note"]}}</small>-->
+        </div>
+
+        <!-- Save Button -->
+        <button type="submit" class="btn btn-primary">{{t["update"]}}</button>
+        <a href="{{ url_for('disease.list_diseases') }}" class="btn btn-secondary">{{t["cancel"]}}</a>
+    </form>
+</div>
+{% endblock %}
+

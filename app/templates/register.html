@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<center>
+<div class="login-box">
+  <div class="login-logo"><b>REGISTER</b></div>
+  <div class="card">
+    <div class="card-body login-card-body">
+        <img src="{{ url_for('static', filename='logo.png') }}" width="80">
+      <form method="POST">
+        <div class="input-group mb-3">
+          <input type="text" name="username" class="form-control" placeholder="Username" required>
+        </div>
+        <div class="input-group mb-3">
+          <input type="password" name="password" class="form-control" placeholder="Password" required>
+        </div>
+        <div class="row">
+          <div class="col-8">
+            <a href="{{ url_for('auth.login') }}">Already have an account?</a>
+          </div>
+          <div class="col-4">
+            <button type="submit" class="btn btn-primary btn-block">Register</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>                                      
+</div>
+{% endblock %}
+</center>
+

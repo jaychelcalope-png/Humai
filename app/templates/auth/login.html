@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: #0b3d0b;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+header, nav, .navbar, .main-header, .language-switcher {
+  display: none !important;
+}
+
+.center-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #0b3d0b;
+}
+
+.login-box {
+  width: 300px;
+  background: transparent;
+  text-align: center;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.login-logo {
+  font-family: 'Times New Roman', Georgia, serif;
+  font-size: 28px;
+  font-weight: bold;
+  color: #00ff66;
+  margin-bottom: 10px;
+}
+
+.login-box img {
+  width: 80px;
+  height: auto;
+  filter: drop-shadow(0 0 5px #00ff66);
+  margin-bottom: 10px;
+}
+
+.form-control {
+  height: 34px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #00cc55;
+  background-color: #0f4f0f;
+  color: white;
+  margin-bottom: 10px;
+}
+.form-control::placeholder {
+  color: #a0dba0;
+}
+
+.btn-success {
+  background-color: #198754;
+  border: none;
+  font-weight: bold;
+  width: 50%;
+  padding: 5px 0;
+  border-radius: 8px;
+  font-size: 14px;
+}
+.btn-success:hover {
+  background-color: #157347;
+}
+
+.btn-primary {
+  background-color: #0d6efd;
+  border: none;
+  font-weight: bold;
+  width: 100%;
+  padding: 5px 0;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+a {
+  color: #00ff66;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+#camera-stream, #captured-image {
+  width: 280px;
+  border-radius: 10px;
+  margin-top: 15px;
+  display: none;
+}
+</style>
+
+<div class="center-wrapper">
+  <div class="login-box">
+
+    <!-- LOGIN SECTION -->
+    <div id="login-section">
+      <div class="login-logo"><b>LOGIN</b></div>
+
+      <div class="text-center mb-2">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" width="80">
+      </div>
+
+      <form method="POST">
+        <input type="text" name="username" class="form-control" placeholder="Username" required>
+        <input type="password" name="password" class="form-control" placeholder="Password" required>
+        <button type="submit" class="btn btn-success mb-2">Login</button>
+
+      <!-- Detect Button -->
+      <div class="mt-2" id="detect-button">
+        <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-success" style="width:60%;">Detect</a>
+      </div>
+
+       <div class="mt-2">
+          <a href="#" id="need-account-link">Need an account?</a>
+        </div>
+      </form>
+<!---->
+      <!-- Camera Preview -->
+      <video id="camera-stream" autoplay playsinline></video>
+      <button id="capture-btn" class="btn btn-success mt-2" style="display:none;" onclick="capturePhoto()">Capture</button>
+      <img id="captured-image">
+    </div> 
+
+    <!-- REGISTRATION SECTION -->
+    <div id="register-section" style="display:none;">
+      <div class="login-logo"><b>REGISTER</b></div>
+      <form method="POST" action="{{ url_for('auth.register_user') }}">
+        <input type="text" name="username" class="form-control" placeholder="Username" required>
+        <input type="password" name="password" class="form-control" placeholder="Password" required>
+
+        <div class="row mb-3">
+          <div class="col-8">
+            <a href="{{ url_for('auth.login') }}">Already have an account?</a>
+          </div>
+          <div class="col-4">
+            <button type="submit" class="btn btn-primary btn-block">Register</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// TOGGLE SECTIONS WHEN "Need an account?" CLICKED
+document.getElementById("need-account-link").addEventListener("click", function(e) {
+    e.preventDefault();
+    document.getElementById("login-section").style.display = "none";
+    document.getElementById("register-section").style.display = "block";
+});
+</script>
+
+{% endblock %}

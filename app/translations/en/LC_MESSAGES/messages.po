@@ -1,0 +1,46 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Welcome to Rice Disease Detector"
+msgstr "Welcome to Rice Disease Detector"
+
+msgid "Registration successful! Please log in."
+msgstr "Registration successful! Please log in."
+
+msgid "Login"
+msgstr "Login"
+
+msgid "Logout"
+msgstr "Logout"
+
+msgid "Username"
+msgstr "Username"
+
+msgid "Password"
+msgstr "Password"
+
+msgid "Submit"
+msgstr "Submit"
+
+msgid "Upload Image"
+msgstr "Upload Image"
+
+msgid "Detection Logs"
+msgstr "Detection Logs"
+
+msgid "Language"
+msgstr "Language"
+
+msgid "Role"
+msgstr "Role"
+
+msgid "Admin"
+msgstr "Admin"
+
+msgid "Researcher"
+msgstr "Researcher"
+
+msgid "User"
+msgstr "User"
+

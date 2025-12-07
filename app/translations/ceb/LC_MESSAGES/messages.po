@@ -1,0 +1,46 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Welcome to Rice Disease Detector"
+msgstr "Maayong pag-abot sa Tig-ila sa Sakit sa Humay"
+
+msgid "Registration successful! Please log in."
+msgstr "Malampuson ang pagparehistro! Palihog pag-login."
+
+msgid "Login"
+msgstr "Pag-login"
+
+msgid "Logout"
+msgstr "Pag-logout"
+
+msgid "Username"
+msgstr "Username"
+
+msgid "Password"
+msgstr "Password"
+
+msgid "Submit"
+msgstr "Isumite"
+
+msgid "Upload Image"
+msgstr "Pag-upload og Larawan"
+
+msgid "Detection Logs"
+msgstr "Mga Rekord sa Pagkilala"
+
+msgid "Language"
+msgstr "Pinulongan"
+
+msgid "Role"
+msgstr "Papel"
+
+msgid "Admin"
+msgstr "Admin"
+
+msgid "Researcher"
+msgstr "Tigpanukid"
+
+msgid "User"
+msgstr "Tiggamit"
+
