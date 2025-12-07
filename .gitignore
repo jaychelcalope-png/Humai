@@ -11,7 +11,7 @@ env/
 .venv/
 
 # ---- Environment / Secrets ----
-instance/
+
 *.env
 .env.*
 *.pem
