@@ -12,7 +12,7 @@ import requests
 bp = Blueprint('detect', __name__, url_prefix='/detect')
 
 # Load trained model once
-MODEL = load_model("./app/routes/rice_model.h5")
+#MODEL = load_model('rice_model.h5')
 
 # BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # MODEL_PATH = os.path.join(BASE_DIR, "rice_model.h5")
@@ -20,21 +20,22 @@ MODEL = load_model("./app/routes/rice_model.h5")
 # MODEL = load_model(MODEL_PATH)
 
 
-# MODEL_URL = "https://github.com/jaychelcalope-png/Humai/releases/download/v1/rice_model.h5"
+MODEL_URL = "https://github.com/jaychelcalope-png/Humai/releases/download/v1/rice_model.h5"
 
-# MODEL_PATH = os.path.join(os.path.dirname(__file__), "rice_model.h5")
 
-# if not os.path.exists(MODEL_PATH):
-#     print("Downloading model from GitHub...")
-#     response = requests.get(MODEL_URL, stream=True)
-#     with open(MODEL_PATH, "wb") as f:
-#         for chunk in response.iter_content(chunk_size=8192):
-#             if chunk:
-#                 f.write(chunk)
-#     print("Model downloaded to:", MODEL_PATH)
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "rice_model.h5")
 
-# print("Loading model from:", MODEL_PATH)
-# MODEL = load_model(MODEL_PATH)
+if not os.path.exists(MODEL_PATH):
+    print("Downloading model from GitHub...")
+    response = requests.get(MODEL_URL, stream=True)
+    with open(MODEL_PATH, "wb") as f:
+        for chunk in response.iter_content(chunk_size=8192):
+            if chunk:
+                f.write(chunk)
+    print("Model downloaded to:", MODEL_PATH)
+
+print("Loading model from:", MODEL_PATH)
+MODEL = load_model(MODEL_PATH)
 
 
 # Labels used in predictions
