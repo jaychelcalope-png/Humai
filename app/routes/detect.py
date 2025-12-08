@@ -14,11 +14,10 @@ bp = Blueprint('detect', __name__, url_prefix='/detect')
 #MODEL = load_model('rice_model.h5')
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "..", "rice_model.h5")
-MODEL_PATH = os.path.normpath(MODEL_PATH)
 
+MODEL_PATH = os.path.join(BASE_DIR, "rice_model.h5")
+MODEL_PATH = os.path.abspath(MODEL_PATH)
 print("Loading model from:", MODEL_PATH)
-MODEL = load_model(MODEL_PATH)
 
 # Labels used in predictions
 LABELS = [
