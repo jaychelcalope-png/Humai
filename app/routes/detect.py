@@ -8,6 +8,7 @@ from tensorflow.keras.preprocessing import image
 import numpy as np
 import os
 import requests
+from flask import current_app
 
 bp = Blueprint('detect', __name__, url_prefix='/detect')
 
@@ -56,6 +57,7 @@ def detect():
     result = None
     confidence = None
     disease = None
+    model = current_app.config["MODEL"] 
 
     # If logged in, show personal logs
     if current_user.is_authenticated:
@@ -80,7 +82,7 @@ def detect():
             x /= 255.0
 
             # Predict
-            prediction = MODEL.predict(x)
+            prediction = model.predict(x)
             pred_index = np.argmax(prediction)
             pred_label = LABELS[pred_index]
             pred_conf = float(prediction[0][pred_index]) * 100
