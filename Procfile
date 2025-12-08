@@ -1,1 +1,1 @@
-web: gunicorn wsgi:app -w 4 -t 120
+web: gunicorn wsgi:app -w 4 -t 300 -b 0.0.0.0:$PORT
