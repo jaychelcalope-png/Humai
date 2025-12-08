@@ -5,6 +5,7 @@ from flask_migrate import Config, Migrate
 import os
 import requests
 from app.translations import translations
+from tensorflow.keras.models import load_model
 
 db = SQLAlchemy()
 login_manager = LoginManager()
