@@ -19,15 +19,14 @@ bp = Blueprint('detect', __name__, url_prefix='/detect')
 # print("Loading model from:", MODEL_PATH)
 # MODEL = load_model(MODEL_PATH)
 
-
 MODEL_URL = "https://github.com/jaychelcalope-png/Humai/releases/download/v1/rice_model.h5"
-
-
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "rice_model.h5")
+os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
 
 if not os.path.exists(MODEL_PATH):
     print("Downloading model from GitHub...")
     response = requests.get(MODEL_URL, stream=True)
+    response.raise_for_status()
     with open(MODEL_PATH, "wb") as f:
         for chunk in response.iter_content(chunk_size=8192):
             if chunk:
@@ -36,6 +35,7 @@ if not os.path.exists(MODEL_PATH):
 
 print("Loading model from:", MODEL_PATH)
 MODEL = load_model(MODEL_PATH)
+
 
 
 # Labels used in predictions
