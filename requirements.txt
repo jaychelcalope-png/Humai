@@ -1,13 +1,13 @@
-Flask==2.3.2
+Flask
 Flask-Login
 Flask-SQLAlchemy
-Flask-Babel
-Flask-Migrate==4.0.4
+Werkzeug
 
-Werkzeug==2.3.7
 numpy
 pillow
-
-tensorflow==2.9.1
-
+gunicorn
+Flask-Babel
+Flask==2.3.2
+Flask-Migrate==4.0.4
 gunicorn==20.1.0
+tensorflow==2.9.1
