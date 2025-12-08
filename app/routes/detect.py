@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request
 from flask_login import login_required, current_user
 from app.models import DetectionLog, Disease
 from app import db
@@ -9,10 +9,25 @@ import numpy as np
 
 bp = Blueprint('detect', __name__, url_prefix='/detect')
 
-# Load trained model once
-MODEL = load_model('rice_model.h5')
+# ------------------------------------
+#        MODEL LOADING FIXED
+# ------------------------------------
 
-# Labels used in predictions
+# Get the absolute directory of this file
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Build the absolute path to the model file
+MODEL_PATH = os.path.join(BASE_DIR, "..", "rice_model.h5")
+
+# Normalize for Linux/Windows compatibility
+MODEL_PATH = os.path.normpath(MODEL_PATH)
+
+print("Loading model from:", MODEL_PATH)
+
+# Load the model safely
+MODEL = load_model(MODEL_PATH)
+
+# Labels
 LABELS = [
     'Bacterial Leaf Blight',
     'Brown_Spot',
@@ -21,6 +36,7 @@ LABELS = [
     'Rice Tungro',
     'Not Rice Leaf'
 ]
+
 
 # -------------------------------#
 #        DETECTION PAGE          #
@@ -31,20 +47,26 @@ def detect():
     confidence = None
     disease = None
 
-    # If logged in, show personal logs
+    # Logs depending on authentication
     if current_user.is_authenticated:
         page = request.args.get('page', 1, type=int)
-        logs = DetectionLog.query.filter_by(user_id=current_user.id) \
-            .order_by(DetectionLog.timestamp.desc()) \
-            .paginate(page=page, per_page=5)
+        logs = (DetectionLog.query.filter_by(user_id=current_user.id)
+                .order_by(DetectionLog.timestamp.desc())
+                .paginate(page=page, per_page=5))
     else:
-      logs = DetectionLog.query.order_by(DetectionLog.timestamp.desc()).limit(5).all()
+        logs = (DetectionLog.query.order_by(DetectionLog.timestamp.desc())
+                .limit(5)
+                .all())
 
     if request.method == 'POST':
         img_file = request.files.get('image')
         if img_file:
-            # Save uploaded image
-            save_path = os.path.join('app/static/uploads', img_file.filename)
+
+            # Upload path (absolute)
+            upload_dir = os.path.join(BASE_DIR, "..", "static", "uploads")
+            os.makedirs(upload_dir, exist_ok=True)
+
+            save_path = os.path.join(upload_dir, img_file.filename)
             img_file.save(save_path)
 
             # Preprocess
@@ -59,14 +81,11 @@ def detect():
             pred_label = LABELS[pred_index]
             pred_conf = float(prediction[0][pred_index]) * 100
 
-            # Prepare image path (relative)
-            relative_path = os.path.relpath(save_path, "static").replace("\\", "/")
+            # Relative path for HTML
+            relative_path = f"uploads/{img_file.filename}"
 
-            # -----------------#
-            # SAVE TO DATABASE #
-            # -----------------#
+            # Save to DB
             user_id = current_user.id if current_user.is_authenticated else None
-
             log = DetectionLog(
                 image_path=relative_path,
                 result=pred_label,
@@ -77,10 +96,9 @@ def detect():
             db.session.add(log)
             db.session.commit()
 
-            # Fetch disease treatment info
+            # Fetch disease info
             disease = Disease.query.filter_by(name=pred_label).first()
 
-            # Set output display
             result = pred_label
             confidence = pred_conf
 
@@ -92,6 +110,7 @@ def detect():
         logs=logs
     )
 
+
 # -------------------------------#
 #      VIEW DETECTION LOGS       #
 # -------------------------------#
@@ -100,9 +119,8 @@ def detect():
 def logs():
     page = request.args.get('page', 1, type=int)
 
-    logs = DetectionLog.query.filter_by(user_id=current_user.id) \
-        .order_by(DetectionLog.timestamp.desc()) \
-        .paginate(page=page, per_page=5)
+    logs = (DetectionLog.query.filter_by(user_id=current_user.id)
+            .order_by(DetectionLog.timestamp.desc())
+            .paginate(page=page, per_page=5))
 
     return render_template('logs.html', logs=logs)
-
