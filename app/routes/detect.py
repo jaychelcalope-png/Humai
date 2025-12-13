@@ -82,6 +82,7 @@ def detect():
             x /= 255.0
 
             # Predict
+            # change the model
             prediction = model.predict(x)
             pred_index = np.argmax(prediction)
             pred_label = LABELS[pred_index]
