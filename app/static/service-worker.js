@@ -1,13 +1,16 @@
+const CACHE_NAME = "v1";
+
 self.addEventListener("install", event => {
   event.waitUntil(
-    caches.open("v1").then(cache => {
-      return cache.addAll([
-        "/",
-        "/static/css/style.css",
-        "/static/js/app.js"
-      ]);
-    })
+    caches.open(CACHE_NAME).then(cache =>
+      cache.addAll([
+        "/",              
+        "/favicon.ico",    
+        "/logo.png"   
+      ])
+    )
   );
+  self.skipWaiting();
 });
 
 self.addEventListener("fetch", event => {
