@@ -5,8 +5,8 @@ self.addEventListener("install", event => {
     caches.open(CACHE_NAME).then(cache =>
       cache.addAll([
         "/",              
-        "/favicon.ico",    
-        "/logo.png"   
+        "/logo.png",    
+        "/manifest.json"   
       ])
     )
   );
