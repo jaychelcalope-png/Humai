@@ -1,6 +1,6 @@
 {
   "name": "Rice Disease Detection",
-  "short_name": "RiceDetect",
+  "short_name": "HumAI",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -8,12 +8,12 @@
   "icons": [
     {
       "src": "/static/logo.png",
-      "sizes": "192x192",
+      "sizes": "488x740",
       "type": "image/png"
     },
     {
       "src": "/static/logo.png",
-      "sizes": "512x512",
+      "sizes": "488x740",
       "type": "image/png"
     }
   ]
