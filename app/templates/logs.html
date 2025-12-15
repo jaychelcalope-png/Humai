@@ -1,71 +1,115 @@
 {% extends 'base.html' %}
 {% block content %}
-<section class="content">
+
+<section class="content" style="background: #e6f7ef; min-height: 100vh; padding: 20px 0;">
   <div class="container-fluid">
 
-    <div class="card">
-      <div class="card-header"><h3 class="card-title"><strong>{{t[""]}}</strong></h3></div>
-      <div class="card-body">
-        {% if logs %}
-        <div class="table-responsive">
-          <table class="table table-bordered table-hover">
-            <thead>
-              <tr>
-                {% if current_user.role == 'Admin' %}
-                <th>{{t["users"]}}</th>
-                {% endif %}
-                <th>{{t["image"]}}</th>
-                <th>{{t["result"]}}</th>
-                <th>{{t["confidence_level"]}}</th>
-                <th>{{t["date"]}}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for log in logs %}
-              <tr>
-                {% if current_user.role == 'Admin' %}
-                <td>{{ log.user.username }}</td>
-                {% endif %}
-                <td><img src="{{ url_for('static', filename=log.image_path.replace('\\', '/').split('static/')[-1]) }}" height="60"></td>
-                <td><span class="badge badge-success">{{ log.result }}</span></td>
-                <td>{{ '%.2f'|format(log.confidence) }}%</td>
-                <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-        {% else %}
-        <p>No detection logs yet.</p>
-        {% endif %}
+    {% if logs.items %}
+    <!-- Table Box with Scroll -->
+    <div class="table-responsive" 
+         style="max-height: 500px; overflow-y: auto; border: 1px solid #a5d6b1; border-radius: 8px; padding: 6px; background:white;">
+      
+      <table class="table table-bordered table-hover mb-0">
+        <thead style="background-color: #2f855a; color: white; text-align: center;">
+          <tr>
+            {% if current_user.role in ['Admin', 'Expert'] %}
+            <!--<th class="text-center">User</th>-->
+            {% endif %}
+            <th class="text-center">{{ t["image"] }}</th>
+            <th class="text-center">{{ t["result"] }}</th>
+            <th class="text-center">{{ t["confidence_level"] }}</th>
+            <th class="text-center">{{ t["date"] }}</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for log in logs.items %}
+          <tr>
+            {% if current_user.role in ['Admin', 'Expert'] %}
+           <!-- <td class="text-center">{{ log.user.username }}</td>-->
+            {% endif %}
+
+            <td class="text-center">
+              <img src="{{ url_for('static', filename=log.image_path.replace('\\','/').split('static/')[-1]) }}"
+                   height="60" style="border:2px solid #2f855a; border-radius:6px;">
+            </td>
+
+            <td class="text-center" style="font-weight:bold; color:#2f855a;">
+              {{ log.result }}
+            </td>
+
+            <td class="text-center">{{ '%.2f'|format(log.confidence) }}%</td>
+
+            <td class="text-center">{{ log.timestamp.strftime('%m-%d-%Y') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center mt-3">
+      <div style="background:white; padding:12px 22px; border-radius:12px; 
+                  box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+
+        <nav>
+          <ul class="pagination mb-0">
+
+            <!-- Previous -->
+            {% if logs.has_prev %}
+              <li class="page-item">
+                <a class="page-link" style="color:#2f855a;" 
+                   href="{{ url_for('detect.logs', page=logs.prev_num) }}">
+                  {{ t['previous'] }}
+                </a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <span class="page-link">{{ t['previous'] }}</span>
+              </li>
+            {% endif %}
+
+            <!-- Page Numbers (10 per group) -->
+            {% set start_page = ((logs.page - 1) // 10) * 10 + 1 %}
+            {% set end_page = start_page + 9 %}
+            {% if end_page > logs.pages %}
+              {% set end_page = logs.pages %}
+            {% endif %}
+
+            {% for p in range(start_page, end_page + 1) %}
+              <li class="page-item {% if p == logs.page %}active{% endif %}">
+                <a class="page-link" 
+                   style="border:2px solid #2f855a; color:#2f855a; background:transparent;"
+                   href="{{ url_for('detect.logs', page=p) }}">{{ p }}</a>
+              </li>
+            {% endfor %}
+
+            <!-- Next -->
+            {% if logs.has_next %}
+              <li class="page-item">
+                <a class="page-link" style="color:#2f855a;" 
+                   href="{{ url_for('detect.logs', page=logs.next_num) }}">
+                  {{ t['next'] }}
+                </a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <span class="page-link">{{ t['next'] }}</span>
+              </li>
+            {% endif %}
+
+          </ul>
+        </nav>
+
       </div>
     </div>
-<div class="mt-4 d-flex justify-content-center">
-  <nav>
-    <ul class="pagination">
-      {% if logs.has_prev %}
-        <li class="page-item">
-          <a class="page-link" href="{{ url_for('detect.logs', page=logs.prev_num) }}">Previous</a>
-        </li>
-      {% else %}
-        <li class="page-item disabled"><span class="page-link">Previous</span></li>
-      {% endif %}
 
-      {% for p in range(1, logs.pages + 1) %}
-        <li class="page-item {% if p == logs.page %}active{% endif %}">
-          <a class="page-link" href="{{ url_for('detect.logs', page=p) }}">{{ p }}</a>
-        </li>
-      {% endfor %}
+    {% else %}
+      <p class="text-center" style="font-size:18px; color:#2f855a;">No detection logs yet.</p>
+    {% endif %}
 
-      {% if logs.has_next %}
-        <li class="page-item">
-          <a class="page-link" href="{{ url_for('detect.logs', page=logs.next_num) }}">Next</a>
-        </li>
-      {% else %}
-        <li class="page-item disabled"><span class="page-link">Next</span></li>
-      {% endif %}
-    </ul>
-  </nav>
   </div>
 </section>
+
 {% endblock %}

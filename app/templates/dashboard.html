@@ -1,111 +1,188 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<section class="content">
+<section class="content" style="background: #e6f7ef; min-height: 100vh; padding: 20px 0;">
   <div class="container-fluid">
 
-    <div class="jumbotron">
-      <h1 class="display-4" 
-          style="font-family: 'Times New Roman'; font-weight: bold; color: #198754;">
-        {{ t["welcome"] }}
-      </h1>
-     
-      <hr class="my-4">
-      <p style="font-family: 'Times New Roman';">
-        {{ t["with_ai_help"] }}, 
-        <strong>HumAi</strong>
-        {{ t["ai_description"] }}
+    <!-- Welcome Jumbotron -->
+    <div class="jumbotron shadow rounded" style="background: #ffffff;"> 
+      <h1 class="display-4" style="font-family: 'Roboto', sans-serif; font-weight: bold; color: #2f855a;">
+    {{ t["welcome"] }} {{ current_user.username | title }}
+</h1>
+
+
+      {% if current_user.is_authenticated %}
+        <p class="lead" style="color: #252725;">
+         {{ t["logged_in_as"] }}  <strong>{{ role }}</strong>
+        </p>
+      {% else %}
+        <p class="lead" style="color: #252725;">
+          {{ t["Hope your day is going well!"] }}
+        </p>
+      {% endif %}
+
+      <hr class="my-4" style="border-top: 2px solid #198754;">
+      <p style="font-family: 'Roboto', sans-serif; font-size: 18px; color: #252725;">
+        {{ t["with_ai_help"] }}, <strong>HumAi</strong> {{ t["ai_description"] }}
+      </p>
+      <p style="font-family: 'Roboto', sans-serif; font-size: 16px; color: #252725;">
+        {{ t["For more information, please contact us"] }} <strong>#09677283802</strong>
       </p>
     </div>
 
+
+    <!-- Admin Stats (Old Layout + Aesthetic Green Touch) -->
     {% if role == 'Admin' %}
-    <div class="row">
+    <div class="row mb-4">
+
+      <!-- Total Users -->
       <div class="col-lg-4 col-6">
-        <div class="small-box bg-info">
+        <div class="small-box shadow" style="background:#34a853; border-radius:12px; color:white;">
           <div class="inner">
             <h3>{{ stats.users }}</h3>
             <p>{{ t["total_users"] }}</p>
           </div>
-          <div class="icon">
+          <div class="icon" style="opacity:0.7;">
             <i class="fas fa-users"></i>
           </div>
         </div>
       </div>
 
+      <!-- Total Diseases -->
       <div class="col-lg-4 col-6">
-        <div class="small-box bg-success">
+        <div class="small-box shadow" style="background:#2f855a; border-radius:12px; color:white;">
           <div class="inner">
             <h3>{{ stats.diseases }}</h3>
             <p>{{ t["total_diseases"] }}</p>
           </div>
-          <div class="icon">
+          <div class="icon" style="opacity:0.7;">
             <i class="fas fa-virus"></i>
           </div>
         </div>
       </div>
 
+      <!-- Total Detections -->
       <div class="col-lg-4 col-6">
-        <div class="small-box bg-warning">
+        <div class="small-box shadow" style="background:#3cb371; border-radius:12px; color:white;">
           <div class="inner">
             <h3>{{ stats.detections }}</h3>
             <p>{{ t["total_detections"] }}</p>
           </div>
-          <div class="icon">
+          <div class="icon" style="opacity:0.7;">
             <i class="fas fa-microscope"></i>
           </div>
         </div>
       </div>
+
     </div>
     {% endif %}
 
-  </div>
-</section>
 
-<section class="content">
-  <div class="container-fluid">
-
-    <div class="card card-success">
-      <div class="card-header">
+    <!-- Disease Carousel -->
+    <div class="card shadow rounded">
+      <div class="card-header" style="background-color:#28a745; color:white;">
         <h3 class="card-title"><i class="fas fa-virus"></i> {{ t["rice_leaf_details"] }}</h3>
       </div>
+
       <div class="card-body">
         <div id="diseaseCarousel" class="carousel slide" data-ride="carousel">
           <div class="carousel-inner">
 
             {% for disease in diseases %}
-              <div class="carousel-item {% if loop.first %}active{% endif %}">
-                <div class="row justify-content-center">
+            <div class="carousel-item {% if loop.first %}active{% endif %}">
 
-                  <!-- Disease Image -->
-                  <div class="col-md-5 text-center">
+              <div class="row justify-content-center align-items-start">
+
+                <!-- Image -->
+                <div class="col-md-10 text-center mb-3">
+                  <div style="padding:8px; background:#ffffff; border-radius:12px; display:inline-block; box-shadow:0 4px 10px rgba(0,0,0,0.15);">
                     <img src="{{ url_for('static', filename=disease.image_path) }}" 
-                         class="img-fluid rounded shadow" 
-                         alt="{{ disease.name }}"
-                         style="max-height: 250px; object-fit: cover;">
+                         class="img-fluid rounded shadow"
+                         style="max-height:250px; object-fit:cover; border:2px solid #28a745;"
+                         alt="{{ disease.name }}">
+                  </div>
+                </div>
+
+                <!-- Text -->
+                <div class="col-md-10">
+
+                  <h4 class="font-weight-bold text-center mb-2" style="color:#2f855a;">
+                    {{ disease.name }}
+                  </h4>
+
+                  <div class="text-center mb-3">
+                    <a class="btn btn-outline-success mr-2" href="#diseaseCarousel" role="button" data-slide="prev">
+                      {{ t["previous"] }}
+                    </a>
+                    <a class="btn btn-outline-success" href="#diseaseCarousel" role="button" data-slide="next">
+                      {{ t["next"] }}
+                    </a>
                   </div>
 
-                  <!-- Disease Details -->
-                  <div class="col-md-6">
-                    <h4 class="mt-3">{{ disease.name }}</h4>
-                    <p><strong>{{ t["description"] }}:</strong> {{ disease.description }}</p>
+                <div class="row g-3"> <!-- g-3 adds gap between columns -->
 
-                    <!-- Centered Navigation Buttons -->
-                    <div class="text-center mt-3">
-                      <a class="btn btn-success mr-2" href="#diseaseCarousel" role="button" data-slide="prev">
-                        <i class="fas fa-arrow-left"></i> {{ t["previous"] }}
-                      </a>
-                      <a class="btn btn-success" href="#diseaseCarousel" role="button" data-slide="next">
-                        {{ t["next"] }} <i class="fas fa-arrow-right"></i>
-                      </a>
-                    </div>
-                  </div>
+  <!-- Description -->
+  <div class="col-md-4">
+    <div class="p-3 mb-3" 
+         style="background:#ffffff; border-radius:12px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05); text-align: justify;">
+      <p style="font-weight:bold; color:#2f855a;">{{ t["description"] }}:</p>
+      <div style="margin-left:10px; line-height:1.7; white-space:pre-line;">
+        {{ disease.description }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Symptoms -->
+  <div class="col-md-4">
+    <div class="p-3 mb-3" 
+         style="background:#ffffff; border-radius:12px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05); text-align: justify;">
+      <p style="font-weight:bold; color:#2f855a;">{{ t["symptoms"] }}:</p>
+      <ul style="margin-left:20px; line-height:1.7; list-style-type: disc;">
+        {% for line in disease.symptoms.split('\n') %}
+          {% if line.strip().endswith(':') %}
+            <li><strong>{{ line.strip() }}</strong></li>
+          {% elif line.strip() == '' %}
+            <div style="margin-bottom:5px;"></div>
+          {% else %}
+            <div style="margin-left:20px; margin-bottom:5px; text-align: justify;">
+              {{ line.strip() }}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Treatment -->
+  <div class="col-md-4">
+    <div class="p-3 mb-3" 
+         style="background:#ffffff; border-radius:12px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05); text-align: justify;">
+      <p style="font-weight:bold; color:#2f855a;">{{ t["treatment"] }}:</p>
+      <ul style="margin-left:20px; line-height:1.7; list-style-type: disc;">
+        {% for line in disease.treatment.split('\n') %}
+          {% if line.strip().endswith(':') %}
+            <li><strong>{{ line.strip() }}</strong></li>
+          {% elif line.strip() == '' %}
+            <div style="margin-bottom:5px;"></div>
+          {% else %}
+            <div style="margin-left:20px; margin-bottom:5px; text-align: justify;">
+              {{ line.strip() }}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+</div>
+
 
                 </div>
               </div>
-              
+            </div>
             {% else %}
               <div class="carousel-item active">
-                <div class="alert alert-warning text-center">{{ t["no_diseases_found"] }}.</div>
+                <div class="alert alert-warning text-center">{{ t["no_diseases_found"] }}</div>
               </div>
             {% endfor %}
 
@@ -113,5 +190,8 @@
         </div>
       </div>
     </div>
-  
+
+  </div>
+</section>
+
 {% endblock %}

@@ -6,7 +6,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    #email = db.Column(db.String(150), nullable=True) 
     password = db.Column(db.String(200), nullable=False)
     role = db.Column(db.String(20), nullable=False, default='User')
     def set_password(self, password):
@@ -32,8 +31,4 @@ class DetectionLog(db.Model):
     confidence = db.Column(db.Float)  # <--- Add this line
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-
     user = db.relationship('User', backref='logs')
-
-
-

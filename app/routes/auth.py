@@ -8,6 +8,8 @@ from flask_login import logout_user
 
 bp = Blueprint('auth', __name__)
 
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -45,16 +47,16 @@ def register_user():
         username = request.form['username']
         password = request.form['password']
 
+        # Check if username already exists
         if User.query.filter_by(username=username).first():
-            flash('Username already taken', 'danger')
-            return redirect(url_for('auth.register_user'))
+            flash('Username already taken')  # Flash message
+            return redirect(url_for('auth.login'))     # Redirect to login page
 
+        # Create new user
         new_user = User(username=username, password=generate_password_hash(password), role='User')
-
         db.session.add(new_user)
         db.session.commit()
-        flash('Registration successful! Please log in.', 'success')
+        flash('Registration Success! Please log in!')
         return redirect(url_for('auth.login'))
 
     return render_template('register.html')
-

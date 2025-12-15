@@ -3,13 +3,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Config, Migrate
 import os
-import requests
 from app.translations import translations
-from tensorflow.keras.models import load_model
+
 
 db = SQLAlchemy()
 login_manager = LoginManager()
-
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 def allowed_file(filename):
@@ -30,23 +28,6 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
 
-    MODEL_PATH = os.path.join(app.root_path, 'routes', 'rice_model.h5')
-    MODEL_URL = "https://github.com/jaychelcalope-png/Humai/releases/download/v1/rice_model.h5"
-
-    if not os.path.exists(MODEL_PATH):
-        print("Downloading model from GitHub...")
-        response = requests.get(MODEL_URL, stream=True)
-        response.raise_for_status()
-        with open(MODEL_PATH, "wb") as f:
-            for chunk in response.iter_content(chunk_size=8192):
-                if chunk:
-                    f.write(chunk)
-        print("Model downloaded to:", MODEL_PATH)
-
-    print("Loading model from:", MODEL_PATH)
-    app.config["MODEL"] = load_model(MODEL_PATH)
-
-
     @app.context_processor
     def inject_translations():
         lang = session.get("lang", "en")
@@ -61,4 +42,3 @@ def create_app():
     app.register_blueprint(lang.bp)
 
     return app
-

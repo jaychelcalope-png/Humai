@@ -1,43 +1,48 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container mt-4">
-    <h2><strong>{{ t["add_new"] }}</strong></h2>
+
+    <!-- Page Title -->
+    <h2 style="font-family: Cambria; font-weight: bold; font-size: 40px; color: #2f855a;">
+        {{ t["add_new"] }} {{ t["disease"] }}
+    </h2>
+
     <form method="POST" enctype="multipart/form-data">
-        
+
         <!-- Disease Name -->
         <div class="form-group">
-            <label for="name"> {{t["name"]}}</label>
-            <input type="text" class="form-control" id="name" name="name" placeholder="{{ t['enter'] }}" required>
-        </div>
+            <label for="name" style="color: #2f855a; font-weight: bold;">{{t["name"]}}</label>
+            <input type="text" class="form-control" style="border: 2px solid #2f855a;" 
+            id="name" name="name" placeholder="{{ t['enter'] }}" required></div>
 
         <!-- Description -->
         <div class="form-group mt-3">
-            <label for="description">{{t["description"]}}</label>
-            <textarea class="form-control" id="description" name="description" rows="3" placeholder="{{ t['enter'] }}" required></textarea>
-        </div>
+            <label for="description" style="color: #2f855a; font-weight: bold;">{{t["description"]}}</label>
+            <textarea class="form-control" style="border: 2px solid #2f855a;" 
+            id="description" name="description" rows="3" placeholder="{{ t['enter'] }}" required></textarea></div>
 
         <!-- Symptoms -->
         <div class="form-group mt-3">
-            <label for="symptoms">{{t["symptoms"]}}</label>
-            <textarea class="form-control" id="symptoms" name="symptoms" rows="3" placeholder="{{ t['enter'] }}"></textarea>
-        </div>
+            <label for="symptoms" style="color: #2f855a; font-weight: bold;">{{t["symptoms"]}}</label>
+            <textarea class="form-control" style="border: 2px solid #2f855a;" 
+            id="symptoms" name="symptoms" rows="3" placeholder="{{ t['enter'] }}"></textarea></div>
 
         <!-- Treatment -->
         <div class="form-group mt-3">
-            <label for="treatment">{{t["treatment"]}}</label>
-            <textarea class="form-control" id="treatment" name="treatment" rows="3" placeholder="{{ t['enter'] }}"></textarea>
-        </div>
+            <label for="treatment" style="color: #2f855a; font-weight: bold;">{{t["treatment"]}}</label>
+            <textarea class="form-control" style="border: 2px solid #2f855a;" 
+            id="treatment" name="treatment" rows="3" placeholder="{{ t['enter'] }}"></textarea> </div>
 
         <!-- Upload Image -->
         <div class="form-group mt-3">
-            <label for="image">{{t["image"]}}</label>
-            <input type="file" class="form-control-file" id="image" name="image" accept="image/*" required>
-            <small class="form-text text-muted">{{t["upload_instruction"]}}</small>
-        </div>
+            <label for="image" style="color: #2f855a; font-weight: bold;">{{t["image"]}}</label>
+            <input type="file" class="form-control" style="border: 2px solid #2f855a;" 
+            id="image" name="image" accept="image/*" required></div>
 
         <!-- Submit -->
-        <button type="submit" class="btn btn-primary mt-3">{{t["add"]}} {{t["update"]}}</button>
-        <a href="{{ url_for('disease.list_diseases') }}" class="btn btn-secondary mt-3">{{t["cancel"]}}</a>
-    </form>
-</div>
+        <button type="submit" class="btn mt-3" style="background-color: #2f855a; color:white; border-color: #2f855a;">
+            {{t["add"]}} {{t["update"]}}</button>
+
+        <a href="{{ url_for('disease.list_diseases') }}" class="btn btn-secondary mt-3 ms-2">
+            {{t["cancel"]}}</a></form></div>
 {% endblock %}

@@ -1,58 +1,103 @@
 {% extends "base.html" %}
 {% block content %}
+
 <div class="container mt-4">
-   <h2 style="font-family: Cambria, serif; font-weight: bold; font-size: 40px;">
-  {{ t["edit"] }}
-</h2>
+  <!-- Page Title -->
+    <h2 style="font-family: Cambria; font-weight: bold; font-size: 40px; color: #2f855a;">
+    {{ t["edit"] }}</h2>
+
+    <form method="POST" enctype="multipart/form-data" id="diseaseForm">
+
+   <!-- Disease Name -->
+    <div class="form-group mb-3">
+    <label for="name" style="color: #2f855a; font-weight: bold; font-family: Cambria, serif;">
+        {{ t["disease_name"] }}</label>
+    <input 
+           type="text" class="form-control shadow-sm" 
+           id="name" name="name" value="{{ disease.name if disease else '' }}" required
+           style="border: 2px solid #2f855a; border-radius: 8px;"></div>
+
+   <!-- Description -->
+    <div class="form-group mt-3">
+    <label for="description" style="color: #2f855a; font-weight: bold; font-family: Cambria, serif;">
+        {{ t["description"] }}</label>
+    <textarea class="form-control shadow-sm" 
+           id="description" name="description" rows="3" placeholder="{{ t['enter'] }}" required
+           style="border: 2px solid #2f855a; border-radius: 8px;">{{ disease.description if disease else '' }}</textarea></div>
+
+   <!-- Symptoms -->
+   <div class="form-group mt-3">
+    <label for="symptoms" style="color: #2f855a; font-weight: bold; font-family: Cambria, serif;">
+        {{ t["symptoms"] }}</label>
+    <textarea class="form-control shadow-sm" 
+           id="symptoms" name="symptoms" rows="3" placeholder="{{ t['enter'] }}" 
+           style="border: 2px solid #2f855a; border-radius: 8px;">{{ disease.symptoms if disease else '' }}</textarea></div>
+
+   <!-- Treatment -->
+   <div class="form-group mt-3">
+    <label for="treatment" style="color: #2f855a; font-weight: bold; font-family: Cambria, serif;">
+        {{ t["treatment"] }}</label>
+    <textarea class="form-control shadow-sm" 
+           id="treatment" name="treatment" rows="3" placeholder="{{ t['enter'] }}" 
+           style="border: 2px solid #2f855a; border-radius: 8px;">{{ disease.treatment if disease else '' }}</textarea></div>
 
 
-    <form method="POST" enctype="multipart/form-data">
-        <!-- Disease Name -->
-        <div class="mb-3">
-            <label for="name" class="form-label">{{t["disease_name"]}}</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ disease.name }}" required>
-        </div>
+    <!-- Current Image -->
+    {% if disease.image_path %}
+    <div class="mb-3">
+      <label class="form-label" style="color: #2f855a; font-weight: bold;">{{ t["current_image"] }}</label><div>
+        <img src="{{ url_for('static', filename=disease.image_path.split('static/')[-1]) }}"
+        alt="{{ disease.name }}" class="img-thumbnail" style="max-height: 200px;"></div> </div>
+    {% endif %}
 
-        <!-- Disease Description -->
-        <div class="mb-3">
-            <label for="description" class="form-label">{{t["description"]}}</label>
-            <textarea class="form-control" id="description" name="description" rows="4" required>{{ disease.description }}</textarea>
-        </div>
+    <!-- Upload New Image -->
+    <div class="mb-3">
+      <label for="image" class="form-label" style="color: #2f855a; font-weight: bold;">{{ t["upload_new_image"] }}</label>
+      <input class="form-control border-success" type="file" id="image" name="image" accept=".png, .jpg, .jpeg, .gif"></div>
 
-                <!-- Symptoms -->
-        <div class="form-group mt-3">
-            <label for="symptoms">{{t["symptoms"]}}</label>
-            <textarea class="form-control" id="symptoms" name="symptoms" rows="3" placeholder="Enter symptoms">{{ disease.symptoms }}</textarea>
-        </div>
+    <!-- Save Button -->
+    <button type="button" class="btn" 
+            style="background-color:#2f855a; color:white; font-weight:bold;" 
+            onclick="showActionModal('Do you want to proceed with this update?', 'diseaseForm')"> {{ t['update'] }} </button>
 
-        <!-- Treatment -->
-        <div class="form-group mt-3">
-            <label for="treatment">{{t["treatment"]}}</label>
-            <textarea class="form-control" id="treatment" name="treatment" rows="3" placeholder="Enter treatment methods">{{ disease.treatment }}</textarea>
-        </div>
+    <a href="{{ url_for('disease.list_diseases') }}" class="btn btn-secondary ms-2">{{ t["cancel"] }}</a></form></div>
 
-        <!-- Current Image -->
-        {% if disease.image_path %}
-        <div class="mb-3">
-            <label class="form-label">{{t["current_image"]}}</label>
-            <div>
-                <img src="{{ url_for('static', filename=disease.image_path.split('static/')[-1]) }}"
-                     alt="{{ disease.name }}" class="img-thumbnail" style="max-height: 200px;">
-            </div>
-        </div>
-        {% endif %}
+          <!-- ✅ GREEN CONFIRMATION MODAL -->
+          <div class="modal fade" id="actionModal" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content" style="border-radius: 12px; overflow: hidden;">
 
-        <!-- Upload New Image -->
-        <div class="mb-3">
-            <label for="image" class="form-label">{{t["upload_new_image"]}}</label>
-            <input class="form-control" type="file" id="image" name="image" accept=".png, .jpg, .jpeg, .gif">
-            <!-- <small class="text-muted">{{t["add_note"]}}</small>-->
-        </div>
+          <!-- HEADER -->
+          <div class="modal-header" style="background-color:#2f855a;">
+          <h5 class="modal-title" id="actionModalTitle" style="color:white; font-weight:bold;">Confirm Action</h5>
+          <button type="button" class="close text-white" data-dismiss="modal">&times;</button></div>
 
-        <!-- Save Button -->
-        <button type="submit" class="btn btn-primary">{{t["update"]}}</button>
-        <a href="{{ url_for('disease.list_diseases') }}" class="btn btn-secondary">{{t["cancel"]}}</a>
-    </form>
+          <!-- BODY -->
+          <div class="modal-body text-center" style="padding:25px;">
+          <p id="actionModalBody" style="font-size:16px; color:#155724; font-weight:500;">
+          Are you sure you want to proceed? </p></div>
+
+        <!-- FOOTER -->
+        <div class="modal-footer" style="border-top:1px solid #c3e6cb;">
+        <button class="btn btn-secondary" data-dismiss="modal" style="border-radius:6px; font-weight:bold;">No</button>
+        <button type="button" class="btn" id="actionModalConfirm" style="background-color:#2f855a; color:white; font-weight:bold; border-radius:6px;">Yes</button>
+      </div>
+    </div>
+  </div>
 </div>
-{% endblock %}
 
+<!-- JS TO SHOW MODAL AND SUBMIT -->
+    <script>
+    function showActionModal(message, formId) {
+    // Set modal message
+    document.getElementById('actionModalBody').innerText = message;
+    // Set Yes button click to submit the form
+    const confirmBtn = document.getElementById('actionModalConfirm');
+    confirmBtn.onclick = function() {
+        document.getElementById(formId).submit();
+    };
+    // Show modal
+    $('#actionModal').modal('show');
+}
+</script>
+{% endblock %}

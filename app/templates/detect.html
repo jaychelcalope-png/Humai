@@ -1,49 +1,95 @@
 {% extends 'base.html' %}
 {% block content %}
-<section class="content">
+<section class="content" style="background: linear-gradient(to right, #e6f7ef, #ffffff); min-height: 100vh; padding-top: 20px;">
   <div class="container-fluid">
 
     <div class="row">
 
       <!-- Upload / Camera Column -->
       <div class="col-md-6">
-        <div class="card card-primary">
-          <div class="card-header">
-            <h3 class="card-title"><strong>{{t["upload_image_for_detection"]}}</strong></h3>
+        <div class="card shadow-lg rounded" style="border-top: 4px solid #2f855a;">
+          <div class="card-header text-center" style="background-color:#2f855a; color:white;">
+            <h5 class="mb-0"><i class="fas fa-camera"></i> {{ t["detection"] }}</h5>
           </div>
 
           <form method="POST" enctype="multipart/form-data" id="detectionForm">
             <div class="card-body">
 
-              <!-- CAMERA BUTTON ABOVE FILE INPUT -->
-              <div class="form-group">
-                <label><strong>{{t["use_camera_for_detection"]}}</strong></label><br>
-                <button type="button" class="btn btn-success mb-2" id="openCameraBtn">
-                  <i class="fas fa-camera"></i> {{t["use_camera_for_detection"]}}
-                </button>
+              <!-- CAMERA BUTTON CENTERED -->
+              <div class="form-group mb-3 text-center">
+                <label><strong style="color: #77967e;">{{ t["use_camera_for_detection"] }}</strong></label><br>
+                <div class="d-flex justify-content-center">
+                  <button type="button" class="btn" style="background-color:#2f855a; color:white;" id="openCameraBtn">
+                    <i class="fas fa-camera"></i> {{ t["use_camera_for_detection"] }}
+                  </button>
+                </div>
 
                 <video id="cameraPreview" autoplay playsinline 
                        style="display:none; width:100%; margin-top:10px; border-radius:10px; border:1px solid #ccc;"></video>
 
-                <button type="button" class="btn btn-primary mt-2" id="capturePhotoBtn" style="display:none;">
-                  {{t["capture_photo"]}}
+                <button type="button" class="btn mt-2" style="background-color:#2f855a; color:white;" id="capturePhotoBtn">
+                  {{ t["capture_photo"] }}
                 </button>
 
                 <canvas id="cameraCanvas" style="display:none;"></canvas>
               </div>
 
-              <!-- FILE UPLOAD BELOW CAMERA -->
+              <!-- FILE UPLOAD -->
               <div class="form-group mt-3">
-                <label for="image"><strong>{{t["select_image"]}}</strong></label>
-                <input type="file" name="image" accept="image/*" id="fileInput" class="form-control-file">
+                <label for="image" style="color: #28a745; font-weight:bold;">{{ t["select_image"] }}</label>
+                <input type="file" name="image" accept="image/*" id="fileInput" class="form-control border-success">
               </div>
 
-              <button type="submit" class="btn btn-primary mt-2">{{t["detect"]}}</button>
+              <button type="submit" class="btn mt-3 w-100" style="background-color:#2f855a; color:white;">{{ t["detect"] }}</button>
             </div>
           </form>
         </div>
 
-        <!-- JAVASCRIPT CAMERA FUNCTION -->
+        <!-- RESULTS -->
+        {% if result %}
+        <div class="alert rounded shadow-sm mt-3" style="background-color:#28a745; color:white;">
+          <strong>{{ t["result"] }}:</strong> {{ result }}<br>
+          <strong>{{ t["confidence"] }}:</strong> {{ confidence }}
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Disease Info Column (Text Only) -->
+      {% if disease %}
+      <div class="col-md-6">
+        <div class="card shadow-lg rounded">
+          <div class="card-body" style="text-align: justify;">
+
+            <h5 style="color:#28a745;"><strong>{{ disease.name }}</strong></h5>
+
+            <!-- Description -->
+            <p><strong>{{ t["description"] }}:</strong></p>
+            <div style="margin-left: 10px; color:#212221;">
+              {{ disease.description | replace('\n', '<br>') | safe }}
+            </div>
+
+            <!-- Symptoms -->
+            <p class="mt-2"><strong>{{ t["symptoms"] }}:</strong></p>
+            <div style="margin-left: 10px; color:#212221;">
+              {{ disease.symptoms | replace('\n', '<br>') | safe }}
+            </div>
+
+            <!-- Treatment -->
+            <p class="mt-2"><strong>{{ t["treatment"] }}:</strong></p>
+            <div style="margin-left: 10px; color:#212221;">
+              {{ disease.treatment | replace('\n', '<br>') | safe }}
+            </div>
+
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</section>
+
+<!-- CAMERA JS -->
 <script>
 const openCameraBtn = document.getElementById('openCameraBtn');
 const capturePhotoBtn = document.getElementById('capturePhotoBtn');
@@ -51,7 +97,6 @@ const video = document.getElementById('cameraPreview');
 const canvas = document.getElementById('cameraCanvas');
 let stream;
 
-// Open Camera
 openCameraBtn.addEventListener('click', async () => {
     try {
         stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
@@ -64,26 +109,21 @@ openCameraBtn.addEventListener('click', async () => {
     }
 });
 
-// Capture Photo
 capturePhotoBtn.addEventListener('click', () => {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     const ctx = canvas.getContext('2d');
     ctx.drawImage(video, 0, 0);
-
     stream.getTracks().forEach(track => track.stop());
     video.style.display = 'none';
     capturePhotoBtn.style.display = 'none';
 
     canvas.toBlob((blob) => {
-        const file = new File([blob], `capture_${Date.now()}.png`, { type: 'image/png' });
+        const file = new File([blob], capture_${Date.now()}.png, { type: 'image/png' });
         const data = new FormData();
         data.append('image', file);
-
-        fetch("", {
-            method: "POST",
-            body: data
-        }).then(res => res.text())
+        fetch("", { method: "POST", body: data })
+          .then(res => res.text())
           .then(html => {
               document.open();
               document.write(html);
@@ -92,63 +132,4 @@ capturePhotoBtn.addEventListener('click', () => {
     }, 'image/png');
 });
 </script>
-
-        <!-- RESULTS -->
-        {% if result %}
-        <div class="alert alert-success mt-3">
-          <strong>{{t["result"]}}:</strong> {{ result }}<br>
-          <strong>{{t["confidence"]}}:</strong> {{ confidence }}
-        </div>
-        {% endif %}
-
-        {% if disease %}
-        <div class="card mt-4">
-          <div class="card-header"><h5>{{t["select_image"]}}</h5></div>
-          <div class="card-body">
-            <p><strong>{{t["description"]}}:</strong> {{ disease.description }}</p>
-            <p><strong>{{t["symptoms"]}}:</strong> {{ disease.symptoms }}</p>
-            <p><strong>{{t["treatment"]}}:</strong> {{ disease.treatment }}</p>
-          </div>
-        </div>
-        {% endif %}
-
-        {% if result and not disease %}
-        <div class="alert alert-warning mt-3">
-          {{t["no_detailed_info_found"]}} <strong>{{ result }}</strong>.
-        </div>
-        {% endif %}
-
-      </div>
-
-      <!-- LOGS COLUMN -->
-      <div class="col-md-6">
-        <div class="card card-secondary">
-          <div class="card-header"><h3 class="card-title">
-            <strong>{{t["detection_logs"]}}</strong></h3></div>
-
-          <div class="card-body">
-            {% if logs %}
-            <ul class="list-group">
-              {% for log in logs %}
-              <li class="list-group-item">
-                <strong>{{ log.result }}</strong> —
-                {{ log.timestamp.strftime('%Y-%m-%d %H:%M') }}<br>
-                <img src="{{ url_for('static', filename=log.image_path.replace('\\','/').split('static/')[-1]) }}" height="80">
-                <span class="badge badge-success">
-                  {{ log.result }} ({{ '%.2f'|format(log.confidence) }}%)
-                </span>
-              </li>
-              {% endfor %}
-            </ul>
-            {% else %}
-              <p>{{t["no_detections_yet"]}}.</p>
-            {% endif %}
-          </div>
-
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
 {% endblock %}

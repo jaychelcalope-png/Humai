@@ -6,7 +6,11 @@ import os
 from werkzeug.utils import secure_filename
 from flask_migrate import Migrate
 
+
+
 bp = Blueprint('disease', __name__, url_prefix='/disease')
+
+
 
 def admin_or_researcher_required(f):
     from functools import wraps
@@ -24,6 +28,8 @@ def admin_or_researcher_required(f):
 def list_diseases():
     diseases = Disease.query.all()
     return render_template('disease/list.html', diseases=diseases)
+
+
 
 @bp.route('/create', methods=['GET', 'POST'])
 @login_required
@@ -104,4 +110,3 @@ def delete_disease(id):
 
     flash('Disease deleted successfully!', 'success')
     return redirect(url_for('disease.list_diseases'))
-

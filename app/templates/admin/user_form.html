@@ -1,56 +1,140 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block content %}
-<section class="content">
-  <div class="container-fluid">
+<div class="container mt-4">
+
+    <!-- Page Title -->
+    <h2 style="font-family: Cambria; font-weight: bold; font-size: 40px; color: #2f855a;">
+        {{ t["edit user"] }}
+    </h2>
 
     {% with messages = get_flashed_messages() %}
       {% if messages %}
-        <div class="alert alert-info">
+        <div class="alert alert-info rounded shadow-sm p-2 mb-3">
           {% for msg in messages %}
-            <p>{{ msg }}</p>
+            <p class="mb-0">{{ msg }}</p>
           {% endfor %}
         </div>
       {% endif %}
     {% endwith %}
 
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title"><strong>{{ 'Edit' if user else 'Create' }} User</strong></h3>
-      </div>
+    <form method="POST" id="userForm">
 
-      <div class="card-body">
-        <form method="POST">
-          <!-- Username -->
-          <div class="form-group">
-            <label>Username</label>
-            <input name="username" class="form-control" 
-                   value="{{ user.username if user else '' }}" required>
-          </div>
+        <!-- Username -->
+        <div class="form-group mt-3">
+            <label style="color: #2f855a; font-weight: bold;">{{ t["username"] }}</label>
+            <input 
+                type="text" 
+                class="form-control"
+                style="border: 2px solid #2f855a;"
+                name="username" 
+                value="{{ user.username if user else '' }}" 
+                required>
+        </div>
 
-          <!-- Role -->
-          <div class="form-group">
-            <label>Role</label>
-            <select name="role" class="form-control" required>
-              <option value="">Select Role</option>
-              {% for r in ['Admin', 'Expert', 'User'] %}
-                <option value="{{ r }}" {% if user and user.role == r %}selected{% endif %}>{{ r }}</option>
-              {% endfor %}
+        <!-- Role -->
+        <div class="form-group mt-3">
+            <label style="color: #2f855a; font-weight: bold;">{{ t["role"] }}</label>
+            <select 
+                class="form-control"
+                style="border: 2px solid #2f855a;"
+                name="role" 
+                required>
+                
+                <option value="" disabled selected>
+                    {{ t['select_role'] if t['select_role'] else 'Select Role' }}
+                </option>
+
+                <option value="Admin" {% if user and user.role == 'Admin' %}selected{% endif %}>Admin</option>
+                <option value="Expert" {% if user and user.role == 'Expert' %}selected{% endif %}>Expert</option>
+                <option value="User" {% if user and user.role == 'User' %}selected{% endif %}>User</option>
+
             </select>
-          </div>
+        </div>
 
-          <!-- Password (only for create) -->
-          {% if not user %}
-          <div class="form-group">
-            <label>Password</label>
-            <input name="password" type="password" class="form-control" required>
-          </div>
-          {% endif %}
+        <!-- Password (Only when creating new user) -->
+        {% if not user %}
+        <div class="form-group mt-3">
+            <label style="color: #2f855a; font-weight: bold;">Password</label>
+            <input 
+                type="password" 
+                class="form-control" 
+                style="border: 2px solid #2f855a;"
+                name="password" 
+                required>
+        </div>
+        {% endif %}
 
-          <!-- Submit button -->
-          <button type="submit" class="btn btn-success">{{ 'Update' if user else 'Create' }}</button>
-        </form>
+        <!-- Submit -->
+        <button type="submit" class="btn mt-3"
+                style="background-color: #2f855a; color:white; border-color:#2f855a;">
+            {{ t["update"] }}
+        </button>
+
+        <!-- Cancel -->
+        <a href="{{ url_for('admin.manage_users') }}" 
+           class="btn btn-secondary mt-3 ms-2">
+            {{ t["cancel"] }}
+        </a>
+
+    </form>
+</div>
+
+<!-- MODAL -->
+<div class="modal fade" id="actionModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 12px; overflow: hidden;">
+
+      <div class="modal-header" style="background-color:#28a745;">
+        <h5 class="modal-title" style="color:white; font-weight:bold;">
+          Confirm Action
+        </h5>
+        <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
       </div>
+
+      <div class="modal-body text-center" style="padding:25px;">
+        <p id="actionModalBody" style="font-size:16px; color:#155724; font-weight:500;">
+          Are you sure you want to proceed?
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal"
+                style="border-radius:6px; font-weight:bold;">No</button>
+
+        <button type="button" class="btn" id="actionModalConfirm"
+                style="background-color:#28a745; color:white; font-weight:bold; border-radius:6px;">
+          Yes
+        </button>
+      </div>
+
     </div>
   </div>
-</section>
+</div>
+
+<!-- JS -->
+<script>
+function showActionModalBeforeSubmit(event) {
+    const form = document.getElementById("userForm");
+
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return false;
+    }
+
+    event.preventDefault();
+    showActionModal("Do you want to proceed with this action?", "userForm");
+    return false;
+}
+
+function showActionModal(message, formId) {
+    document.getElementById("actionModalBody").innerText = message;
+
+    document.getElementById("actionModalConfirm").onclick = function () {
+        document.getElementById(formId).submit();
+    };
+
+    $("#actionModal").modal("show");
+}
+</script>
+
 {% endblock %}
