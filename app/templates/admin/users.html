@@ -16,6 +16,12 @@
 <!--Manage User-->
     <div class="card shadow-sm rounded">
       <div class="card-body">
+              <div class="card-footer d-flex justify-content-end">
+        <a href="{{ url_for('admin.create_user') }}" 
+           class="btn" style="background-color:#2f855a; color:white; font-weight:bold;">
+          {{ t["create_new_user"] }}
+        </a>
+      </div>
         <table class="table table-bordered">
           <thead>
             <tr class="text-center" style="background-color:#2f855a; color:white; font-weight:bold;">
@@ -54,12 +60,6 @@
       </div>
 
       <!-- Button sa ubos sa card -->
-      <div class="card-footer d-flex justify-content-end" style="background:#f0f7f4;">
-        <a href="{{ url_for('admin.create_user') }}" 
-           class="btn" style="background-color:#2f855a; color:white; font-weight:bold;">
-          {{ t["create_new_user"] }}
-        </a>
-      </div>
     </div>
   </div>
 </section>
