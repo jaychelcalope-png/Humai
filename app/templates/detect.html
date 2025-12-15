@@ -28,7 +28,7 @@
                        style="display:none; width:100%; margin-top:10px; border-radius:10px; border:1px solid #ccc;"></video>
 
                 <button type="button" class="btn mt-2" style="background-color:#2f855a; color:white;" id="capturePhotoBtn">
-                  {{ t["capture_photo"] }}
+                  {{ t["capture_photo"] }}Capture
                 </button>
 
                 <canvas id="cameraCanvas" style="display:none;"></canvas>
@@ -119,7 +119,7 @@ capturePhotoBtn.addEventListener('click', () => {
     capturePhotoBtn.style.display = 'none';
 
     canvas.toBlob((blob) => {
-        const file = new File([blob], capture_${Date.now()}.png, { type: 'image/png' });
+        const file = new File([blob], `capture_${Date.now()}.png`, { type: 'image/png' });
         const data = new FormData();
         data.append('image', file);
         fetch("", { method: "POST", body: data })
