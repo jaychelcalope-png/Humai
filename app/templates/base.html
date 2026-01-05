@@ -13,7 +13,31 @@
   <style>
    body.login-page {  background-color: #0ab139 !important; font-family: 'Segoe UI', sans-serif;}
     .main-sidebar, .main-header { background-color: #28a745 !important;  }
+     @media (max-width: 768px) {
+
+    .table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table.disease-table {
+      min-width: 900px; /* murag landscape */
+    }
+
+    table.disease-table th,
+    table.disease-table td {
+      font-size: 14px;
+      padding: 8px;
+    }
+
+    table.disease-table img {
+      width: 80px;
+      height: auto;
+    }
+
+  }
   </style>
+
 </head>
 
 <body class="{% if request.endpoint == 'auth.login' or request.endpoint == 'auth.register_user' %}login-page{% else %}hold-transition sidebar-mini layout-fixed{% endif %}">
