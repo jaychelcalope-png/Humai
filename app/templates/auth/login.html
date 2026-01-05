@@ -3,11 +3,9 @@
 <style>
 /* Base */
 html, body {
-  background: linear-gradient(135deg, #28a745, #28a745);
-  height: 80%;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  background: #28a745;
 }
 
 header, nav, .navbar, .main-header, .main-sidebar, .language-switcher {
@@ -15,10 +13,11 @@ header, nav, .navbar, .main-header, .main-sidebar, .language-switcher {
 }
 
 .center-wrapper {
-  height: 80vh;
+  min-height: 100svh; /* mobile-safe viewport */
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-top: env(safe-area-inset-top);
 }
 
 /* GLASS CARD */
