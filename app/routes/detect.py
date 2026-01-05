@@ -1,18 +1,17 @@
 import os
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app, send_from_directory, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from flask_login import login_required, current_user
 from app.models import DetectionLog, Disease
 from app import db
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 import numpy as np
-import tempfile
-from werkzeug.utils import secure_filename
 
 bp = Blueprint('detect', __name__, url_prefix='/detect')
 
 MODEL = load_model('rice_model.h5')
 
+# Labels used in predictions
 LABELS = [
     'Bacterial Leaf Blight',
     'Brown_Spot',
@@ -21,27 +20,6 @@ LABELS = [
     'Rice Tungro',
     'Not Rice Leaf'
 ]
-
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-
-def allowed_file(filename):
-    return '.' in filename and '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-# -----------------------------------
-# TEMPORARY UPLOAD FOLDER FOR DETECTION (mobile-friendly)
-# -----------------------------------
-def get_temp_upload_dir():
-    save_dir = os.path.join(tempfile.gettempdir(), 'detection')
-    os.makedirs(save_dir, exist_ok=True)
-    return save_dir
-
-# -----------------------------------
-# ROUTE TO SERVE TEMP IMAGES (optional)
-# -----------------------------------
-@bp.route('/uploads/<filename>')
-def uploaded_file(filename):
-    save_dir = get_temp_upload_dir()
-    return send_from_directory(save_dir, filename)
 
 # -----------------------------------
 # DETECTION PAGE
@@ -61,20 +39,14 @@ def detect():
     else:
         logs = DetectionLog.query.order_by(DetectionLog.timestamp.desc()).limit(5).all()
 
+    # -----------------------------------
     # HANDLE IMAGE UPLOAD
+    # -----------------------------------
     if request.method == 'POST':
         img_file = request.files.get('image')
 
-        if img_file and allowed_file(img_file.filename):
-            # Decide folder: TEMP for camera capture, else static/uploads for Add Disease
-            if "capture_" in img_file.filename:  # camera capture
-                save_dir = get_temp_upload_dir()
-            else:
-                save_dir = os.path.join(current_app.root_path, 'static/uploads')
-
-            os.makedirs(save_dir, exist_ok=True)
-            filename = secure_filename(img_file.filename)
-            save_path = os.path.join(save_dir, filename)
+        if img_file:
+            save_path = os.path.join('app/static/uploads', img_file.filename)
             img_file.save(save_path)
 
             # Image preprocessing
@@ -91,7 +63,7 @@ def detect():
 
             # Save to DB
             user_id = current_user.id if current_user.is_authenticated else None
-            relative_path = os.path.relpath(save_path, os.path.join(current_app.root_path, 'static')).replace("\\", "/")
+            relative_path = os.path.relpath(save_path, "static").replace("\\", "/")
 
             log = DetectionLog(
                 image_path=relative_path,
@@ -102,7 +74,7 @@ def detect():
             db.session.add(log)
             db.session.commit()
 
-            # Save to session for GET display
+            # Save to session
             disease_obj = Disease.query.filter_by(name=pred_label).first()
             session['last_result'] = pred_label
             session['last_confidence'] = pred_conf
@@ -110,7 +82,9 @@ def detect():
 
             return redirect(url_for('detect.detect'))
 
-    # GET RESULT FROM SESSION
+    # -----------------------------------
+    # GET DETECTION RESULT FROM SESSION
+    # -----------------------------------
     result = session.pop('last_result', None)
     confidence = session.pop('last_confidence', None)
     disease_id = session.pop('last_disease_id', None)
